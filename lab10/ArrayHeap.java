@@ -28,7 +28,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int leftIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return 2 * i;
     }
 
     /**
@@ -36,7 +36,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int rightIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return 2 * i + 1;
     }
 
     /**
@@ -44,7 +44,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int parentIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return i / 2;
     }
 
     /**
@@ -99,6 +99,10 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
     }
 
+    private boolean greater(int i, int j) {
+        return contents[i].myPriority > contents[j].myPriority;
+    }
+
 
     /**
      * Bubbles up the node currently at the given index.
@@ -108,7 +112,10 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         validateSinkSwimArg(index);
 
         /** TODO: Your code here. */
-        return;
+        while (index > 1 && greater(parentIndex(index), index)) {
+            swap(parentIndex(index), index);
+            index = parentIndex(index);
+        }
     }
 
     /**
@@ -119,7 +126,13 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         validateSinkSwimArg(index);
 
         /** TODO: Your code here. */
-        return;
+        while (leftIndex(index) <= size) {
+            int j = leftIndex(index);
+            if (j < size && greater(j , j+1)) j++;
+            if (!greater(index, j)) break;;
+            swap(index, j);
+            index = j;
+        }
     }
 
     /**
@@ -134,6 +147,8 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
 
         /* TODO: Your code here! */
+        contents[++size] = new Node(item, priority);
+        swim(size);
     }
 
     /**
@@ -143,7 +158,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public T peek() {
         /* TODO: Your code here! */
-        return null;
+        return contents[1].myItem;
     }
 
     /**
@@ -158,7 +173,12 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public T removeMin() {
         /* TODO: Your code here! */
-        return null;
+        T min = peek();
+        swap(1, size);
+        contents[size] = null;
+        size--;
+        sink(1);
+        return min;
     }
 
     /**
@@ -181,7 +201,14 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public void changePriority(T item, double priority) {
         /* TODO: Your code here! */
-        return;
+        for (int i = 1; i <= size; i++) {
+            if (getNode(i).myItem.equals(item)) {
+                getNode(i).myPriority = priority;
+                sink(i);
+                swim(i);
+                break;
+            }
+        }
     }
 
     /**
@@ -412,5 +439,45 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
             assertEquals(expected[i], pq.removeMin());
             i += 1;
         }
+    }
+
+    @Test
+    public void testChangePriority() {
+        ArrayHeap<String> pq = new ArrayHeap<>();
+        pq.size = 7;
+        for (int i = 1; i <= 7; i += 1) {
+            pq.contents[i] = new ArrayHeap<String>.Node("x" + i, i);
+        }
+        // Change item x6's priority to a low value.
+
+
+        System.out.println("PQ before swimming:");
+        System.out.println(pq);
+
+        // chage x6 priority. It should reach the root.
+
+        pq.changePriority("x6", 0);
+        System.out.println("PQ after swimming:");
+        System.out.println(pq);
+        assertEquals("x6", pq.contents[1].myItem);
+        assertEquals("x2", pq.contents[2].myItem);
+        assertEquals("x1", pq.contents[3].myItem);
+        assertEquals("x4", pq.contents[4].myItem);
+        assertEquals("x5", pq.contents[5].myItem);
+        assertEquals("x3", pq.contents[6].myItem);
+        assertEquals("x7", pq.contents[7].myItem);
+
+        // chage x6 priority. It should reach the root.
+
+        pq.changePriority("x1", 4);
+        System.out.println("PQ after swimming:");
+        System.out.println(pq);
+        assertEquals("x6", pq.contents[1].myItem);
+        assertEquals("x2", pq.contents[2].myItem);
+        assertEquals("x3", pq.contents[3].myItem);
+        assertEquals("x4", pq.contents[4].myItem);
+        assertEquals("x5", pq.contents[5].myItem);
+        assertEquals("x1", pq.contents[6].myItem);
+        assertEquals("x7", pq.contents[7].myItem);
     }
 }
