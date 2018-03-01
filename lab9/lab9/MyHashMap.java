@@ -28,7 +28,7 @@ public class MyHashMap<K,V> implements Map61B<K, V> {
         this.loadFactor = loadFactor;
         ea = (Entry <K, V>[]) new Entry[initialSize];
         for (int i = 0; i < size; i++)
-            ea[i] = new Entry<K, V>();
+            ea[i] = new Entry<>();
     }
 
     /** Removes all of the mappings from this map. */
@@ -36,7 +36,7 @@ public class MyHashMap<K,V> implements Map61B<K, V> {
     public void clear() {
         n = 0;
         for (int i = 0; i < this.size; i++)
-            ea[i] = new Entry<K, V>();
+            ea[i] = new Entry<>();
         keySet = null;
     }
 
@@ -99,7 +99,7 @@ public class MyHashMap<K,V> implements Map61B<K, V> {
         /** Stores KEY as the key in this key-value pair, VAL as the value, and
          *  NEXT as the next node in the linked list. */
         Entry(K k, V v, Entry<K, V> next) {
-            key = k; val = v; next = next;
+            key = k; val = v; this.next = next;
         }
 
         /** Returns the Entry in this linked list of key-value pairs whose key
@@ -121,7 +121,7 @@ public class MyHashMap<K,V> implements Map61B<K, V> {
                     return;
                 }
             }
-            next = new Entry<K, V>(key, val, next);
+            next = new Entry<>(key, val, next);
         }
 
         boolean contains(K key) {
