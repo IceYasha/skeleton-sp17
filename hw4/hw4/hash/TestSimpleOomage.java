@@ -3,10 +3,7 @@ package hw4.hash;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 
 public class TestSimpleOomage {
@@ -26,6 +23,24 @@ public class TestSimpleOomage {
           meaning no two SimpleOomages should EVER have the same
           hashCode!
          */
+        SimpleOomage ooA;
+        Deque<SimpleOomage> omages = new ArrayDeque<>();
+        for (int i = 0; i <= 255; i += 5) {
+            for (int j = 0; j <= 255; j += 5) {
+                for (int k = 0 ; k <= 255; k += 5) {
+                    omages.addFirst(new SimpleOomage(i, j, k));
+                }
+            }
+        }
+        while (omages.size() != 0) {
+            ooA = omages.removeFirst();
+            for(SimpleOomage o : omages) {
+//                System.out.print(o.hashCode());
+//                System.out.print(' ');
+//                System.out.println(ooA.hashCode());
+                assertNotEquals(ooA.hashCode(), o.hashCode());
+            }
+        }
     }
 
     @Test
@@ -50,7 +65,7 @@ public class TestSimpleOomage {
 
     /* TODO: Once you've finished haveNiceHashCodeSpread,
     in OomageTestUtility, uncomment this test. */
-    /*@Test
+    @Test
     public void testRandomOomagesHashCodeSpread() {
         List<Oomage> oomages = new ArrayList<>();
         int N = 10000;
@@ -60,7 +75,7 @@ public class TestSimpleOomage {
         }
 
         assertTrue(OomageTestUtility.haveNiceHashCodeSpread(oomages, 10));
-    }*/
+    }
 
     /** Calls tests for SimpleOomage. */
     public static void main(String[] args) {
